@@ -1,0 +1,52 @@
+#!/usr/bin/perl -s
+use strict;
+use warnings;
+
+our $a; # If we're only checking the anime drives.
+
+my @drives = (
+	"/media/internal/plex/dr1/",
+	"/media/internal/plex/dr2/",
+	"/media/internal/plex/dr3/",
+	"/media/internal/plex/dr4/",
+	"/media/internal/plex/dr5/",
+	"/media/internal/plex/dr6/",
+	"/media/internal/plex/dr7/",
+);
+
+sub format_gb {
+	my $size = shift;
+	return sprintf("%.2fG", (($size/1024)/1024));
+}
+
+if($a) {
+	my @sizes;
+
+	for(1..2){
+		my $raw_result = `du -d 0 \"$drives[$_]\"`;
+		my $size = (split(/\s+/, $raw_result))[0];
+		push @sizes, $size;
+	}
+
+	if($sizes[0] > $sizes[1]){
+		$sizes[0] = format_gb($sizes[0]);
+		$sizes[1] = format_gb($sizes[1]) . " <------";
+	} elsif($sizes[0] <= $sizes[1]){
+		$sizes[0] = format_gb($sizes[0]) . " <------";
+		$sizes[1] = format_gb($sizes[1]);
+	}
+
+	my $ctr = 1;
+
+	foreach(@sizes) {
+		print "$drives[$ctr] | $_\n";
+		$ctr++;
+	}
+} else {
+	foreach(@drives){
+		my $raw_result = `du -d 0 \"$_\"`;
+		my $size = (split(/\s+/, $raw_result))[0];
+
+		print "$_ | " . format_gb($size) . "\n";
+	}
+}

@@ -1,0 +1,38 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+my $video_dir = "/media/internal/nas/dr1/Videos/ToFormat";
+my $output_dir = "/media/internal/nas/dr1/Videos/PostHB";
+
+my @presets = (
+	"/media/internal/nas/dr1/handbrake/bd_animation.json",
+	"/media/internal/nas/dr1/handbrake/bd_film.json",
+	"/media/internal/nas/dr1/handbrake/dvd_animation.json",
+	"/media/internal/nas/dr1/handbrake/dvd_film.json"
+);
+
+print "\nSelect a preset:\n";
+print "\t1) BD Animation\n";
+print "\t2) BD Film\n";
+print "\t3) DVD Animation\n";
+print "\t4) DVD Film\n";
+print "\nSelection: ";
+
+my $input = <STDIN>;
+chomp $input;
+my $preset;
+
+if($input =~ /[1-scalar(@presets)]/){
+	$preset = $presets[$input-1];
+} 
+
+print "$preset\n";
+
+opendir(my $dh, $video_dir) || die "Cannot open: $video_dir: $!";
+my @files = grep { /\.mkv$/ } readdir($dh);
+closedir $dh;
+
+foreach(@files){
+	`HandBrakeCLI --preset-import-file $preset -i \"$video_dir/$_\" -o \"$output_dir/$_\"`;
+}

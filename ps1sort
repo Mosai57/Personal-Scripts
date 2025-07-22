@@ -1,0 +1,20 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use Cwd;
+
+my $root_dir = "/media/internal/nas/dr1/Emulators/Roms/PS1/";
+my @directories = grep { -d } glob $root_dir . "*";
+foreach(@directories){
+	chdir $_;	
+	
+	if(!(-d "Bin Cue")){ `mkdir "Bin Cue"`; }
+	if(!(-d "CHD")){ `mkdir "CHD"`; }
+	if(!(-d "PSP")){ `mkdir "PSP"`; }
+	
+	`mv *.bin "Bin Cue"`;
+	`mv *.cue "Bin Cue"`;
+	`mv *.chd "CHD"`;
+	`mv *.PBP "PSP"`;
+}
+

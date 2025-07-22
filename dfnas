@@ -1,0 +1,81 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use Math::Round;
+use Term::ANSIScreen qw(cls);
+
+my $clear_screen = cls();
+print $clear_screen;
+
+my @raw = `df | grep internal/nas`;
+my @results = `df -h | grep internal/nas`;
+my %data;
+
+my $tot_total;
+my $tot_used;
+my $tot_perc;
+my $tot_stat_bar = "";
+
+my $border = "+";
+for(1..100){
+	$border .= "-";
+}
+$border .= "+\n";
+
+foreach(@raw){
+    next if $_ =~ /Use%/;
+
+    my @exp = split(/\s+/, $_);
+
+    $tot_total += ($exp[1]*1000);
+	$tot_used += ($exp[2]*1000);
+}
+
+$tot_perc = round(($tot_used/$tot_total)*100);
+
+foreach (@results) {
+	$_ =~ s/\/media\/internal\///;
+	$_ =~ s/%//;
+
+	my @exp = split(/\s+/, $_);
+
+
+	$data{$exp[5]}->{cap} = $exp[1];
+	$data{$exp[5]}->{used} = $exp[2];
+	$data{$exp[5]}->{free} = $exp[3];
+	$data{$exp[5]}->{pctg} = $exp[4];
+}
+
+my @keys = keys %data;
+@keys = sort @keys;
+
+foreach(@keys){
+	my $stat_bar = "";
+	my $len = $data{$_}->{pctg};
+	for(my $ctr = 0; $ctr < $len; $ctr++){
+		$stat_bar .= "■";
+	}
+
+	$data{$_}->{bar} = " " . sprintf("%-100s", $stat_bar) . "";
+	
+	my @list = `ls /media/internal/$_`;
+	chomp @list;
+	$data{$_}->{list} = join(', ', @list);
+}
+
+for(my $ctr = 0; $ctr < $tot_perc; $ctr++){
+	$tot_stat_bar .= "■";
+}
+
+foreach(@keys){
+	print sprintf("Drive: %-8s Size: %-8s Used: %-8s Free: %-8s Percentage Used: %-0s", $_, $data{$_}->{cap}, $data{$_}->{used}, $data{$_}->{free}, $data{$_}->{pctg}) . "%\n";;
+	print $border;
+	print $data{$_}->{bar} . "\n";
+	print $border;
+	print $data{$_}->{list} . "\n\n";
+}
+
+print "Total Internal Usage: $tot_perc%\n";
+print $border;
+print " $tot_stat_bar\n";
+print $border;

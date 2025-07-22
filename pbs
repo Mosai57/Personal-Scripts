@@ -1,0 +1,5 @@
+#!/bin/bash
+`find . -mindepth 2 -type f -exec mv -i -- {} . \;`
+`rename 's/^Book \d+ - //g' *.epub`
+rmdir *
+
