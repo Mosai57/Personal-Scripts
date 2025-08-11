@@ -8,6 +8,7 @@ my $output_dir = "/media/internal/nas/dr1/Videos/PostHB";
 my @presets = (
 	"/media/internal/nas/dr1/handbrake/bd_animation.json",
 	"/media/internal/nas/dr1/handbrake/bd_film.json",
+	"/media/internal/nas/dr1/handbrake/bd_tv.json",
 	"/media/internal/nas/dr1/handbrake/dvd_animation.json",
 	"/media/internal/nas/dr1/handbrake/dvd_film.json"
 );
@@ -15,8 +16,9 @@ my @presets = (
 print "\nSelect a preset:\n";
 print "\t1) BD Animation\n";
 print "\t2) BD Film\n";
-print "\t3) DVD Animation\n";
-print "\t4) DVD Film\n";
+print "\t3) BD TV\n";
+print "\t4) DVD Animation\n";
+print "\t5) DVD Film\n";
 print "\nSelection: ";
 
 my $input = <STDIN>;
